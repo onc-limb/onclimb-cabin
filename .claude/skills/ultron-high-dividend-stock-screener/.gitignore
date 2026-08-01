@@ -1,0 +1,16 @@
+# high-dividend-stock-screener スキル: コード・設定・参照・テンプレのみを追跡する。
+# 台帳・リスト・EDINET キャッシュは stock-data/ に分離され、
+# リポジトリ直下の .gitignore で /stock-data/ ごと除外している。
+
+# Python キャッシュ
+__pycache__/
+*.pyc
+
+# 念のため: 万一データがここに生成されても追跡しない
+/registry/
+/lists/
+/edinet/
+
+# 自己進化の実行ログ本体は追跡しない（ディレクトリは .gitkeep で残す）
+logs/*
+!logs/.gitkeep

@@ -1,0 +1,37 @@
+# high-dividend-stock-screener 設定
+# しきい値はユーザー定義の判定軸。勝手に変えない（変更はユーザー指定でのみ。§自己進化の固定対象）。
+# この YAML は bin/hdss_lib.py の最小パーサで読む（ブロックスタイルのマップ/シーケンス/スカラのみ）。
+
+# --- コア判定しきい値（固定対象。進化させない） ---
+yield_min: 4.0            # 配当利回りの下限(%)
+payout_max: 50.0          # 配当性向の上限(%)（< 50% で合格）
+dividend_periods: 5       # 配当推移を見る期数（直近 5 期）
+allow_dividend_cuts: 0    # 評価期間内で許容する減配回数（0=減配年なし。同額維持は OK）
+op_profit_periods: 10     # 営業利益の黒字継続を見る期数（直近 10 期すべて黒字）
+op_cf_periods: 10         # 営業CF の黒字継続を見る期数（直近 10 期すべて黒字）
+revenue_periods: 5        # 売上高の右肩上がりを見る期数（直近 5 期）
+allow_revenue_declines: 1 # 評価期間内で許容する売上減少回数（1=一時的な落ち込みを 1 回まで許容）
+eps_periods: 5            # EPS の右肩上がりを見る期数（直近 5 期）
+allow_eps_declines: 1     # 評価期間内で許容する EPS 減少回数（1=一時的な落ち込みを 1 回まで許容）
+equity_ratio_min: 40.0    # 自己資本比率の下限(%)
+dividend_cagr_min: 5.0    # 増配率の下限(直近 dividend_periods 期の年平均成長率 %)。株価上昇の経路3
+eps_cagr_min: 5.0         # EPS 成長率の下限(直近 eps_periods 期の年平均成長率 %)。株価上昇の経路1
+roe_min: 8.0              # ROE の下限(%)。資本効率が低いと利益成長も PBR 改善も起きにくい
+
+# --- 運用パラメータ（ユーザー発話で都度上書き可） ---
+batch_size: 20            # 1 回の起動で調査する未調査銘柄の件数（サイト負荷とトークン量のバランス）
+mode: continue            # new | continue（既定は continue=台帳の続きから）
+
+# --- 除外する銘柄区分（REIT/投資法人/インフラF 等）。社名サフィックス/部分一致で一次判定 ---
+# 進化対象: 取りこぼし/誤混入が出たらここに追記する（references/screening_rules.md と連動）。
+# 例外: 「リート」だけは部分一致だと「日本コンクリート工業」等を誤除外するため、
+#       hdss_lib.exclusion_reason が「末尾がリート」or「リート投資法人を含む」場合のみ一致させる。
+exclude_name_patterns:
+  - 投資法人
+  - リート
+  - REIT
+  - インフラ投資
+  - インフラファンド
+  - ETF
+  - 上場投信
+  - ETN

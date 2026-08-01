@@ -1,0 +1,6 @@
+{
+  "_comment": "calc_invoice.py の計算既定値。入力 JSON の options が常に優先。源泉徴収の法定率(10.21% / 20.42%, 閾値100万円)は法令で固定のためスクリプト内定数であり、ここでは変更できない。",
+  "tax_rate_default": 10,
+  "rounding": "floor",
+  "withholding": false
+}

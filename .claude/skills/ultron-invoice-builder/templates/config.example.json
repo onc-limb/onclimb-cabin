@@ -1,0 +1,36 @@
+{
+  "_comment": "請求元・取引先・単価の設定例。実データは <repo>/invoice-data/config/billing.json に置く(git 管理外)。取引先の実名・口座情報はこのスキルディレクトリ(git 管理内)には置かないこと。",
+  "issuer": {
+    "name": "山田 太郎",
+    "address": "東京都〇〇区〇〇 1-2-3",
+    "email": "taro@example.com",
+    "phone": "090-0000-0000",
+    "invoice_registration_number": "T0000000000000",
+    "bank_account": "〇〇銀行 〇〇支店 普通 0000000 ヤマダ タロウ"
+  },
+  "defaults": {
+    "payment_terms": "翌月末日",
+    "rounding": "floor",
+    "withholding": false
+  },
+  "clients": [
+    {
+      "id": "client-a",
+      "name": "株式会社〇〇",
+      "address": "東京都〇〇区〇〇 4-5-6",
+      "contact": "〇〇部 〇〇様",
+      "unit_price": 5000,
+      "unit": "時間",
+      "tax_rate": 10,
+      "withholding": false,
+      "settlement": {
+        "_comment": "SES の精算幅(例: 140-180h)。超過/控除単価が別なら excess/deduction を指定。",
+        "lower_hours": 140,
+        "upper_hours": 180,
+        "excess_unit_price": 4200,
+        "deduction_unit_price": 6000
+      },
+      "notes": "毎月末締め・翌月末払い"
+    }
+  ]
+}

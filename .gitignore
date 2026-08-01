@@ -1,0 +1,39 @@
+# dividend-recorder: 配当実績台帳・配当書類の画像（個人の金銭情報のため追跡しない）
+# 末尾スラッシュ無し: Google Drive へのシンボリックリンクのため（ディレクトリ限定だとマッチしない）
+/dividend-data
+
+# portfolio-analyzer: 証券口座の保有CSV・配当履歴CSV・スナップショット・分析レポート
+# （証券口座の保有銘柄・取得単価・損益など個人資産情報を含むため追跡しない）
+/portfolio-data/
+
+# high-dividend-stock-screener: 調査済み台帳・生成リスト・EDINET キャッシュ（機密/再配布不可を含みうるため追跡しない）
+/stock-data/
+
+# family-budget-manager: 共同支出のレシート画像・取引記録（世帯の金銭情報のため追跡しない）
+/shared-expense-data/
+
+# people-memory: 人物ごとの会話記録・好みメモ（人間関係・家族の機密のため追跡しない）
+/people-memory/
+
+# reading-notes: 読書メモ台帳（個人の学習・思考の記録のため追跡しない）
+/reading-notes/
+
+# modeling-notes: モデリング思考のノート台帳・練習課題（個人の思考の記録・案件由来の文脈を含みうるため追跡しない）
+/modeling-notes/
+
+# study: 学習用に AI がコードを書かないディレクトリ（個人の学習・試行錯誤のため追跡しない）
+/study/
+
+# invoice-builder: 請求書・取引先設定（取引先実名・単価・口座情報を含むため追跡しない）
+/invoice-data/
+
+# tax-prep-organizer: 取引データ・科目別集計（個人の金銭情報を含むため追跡しない）
+/tax-data/
+
+# Python: バイトコードキャッシュ・仮想環境（スクリプト実行時の副産物のため追跡しない）
+__pycache__/
+*.pyc
+.venv/
+
+# macOS
+.DS_Store
