@@ -40,6 +40,7 @@
 | `ultron-portfolio-analyzer` | 事務・金融・資産系 |
 | `edith-freelance-rate-research` | 調査・データ収集・分析系 |
 | `griot-modeling-drill` | 練習・コーチング系 |
+| `griot-project-doc-reviewer` | 練習・コーチング系 |
 | `vision-people-memory` | プライベート・人間関係系 |
 
 ## 補足

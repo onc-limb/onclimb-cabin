@@ -5,7 +5,7 @@
 設計・モデリングなど思考スキルのトレーニング（課題の供給）を扱う。
 聞き手・読み手は自分自身（上達のための練習であって、他者への配布物を作るのではない）。
 
-所属スキル: `griot-modeling-drill`
+所属スキル: `griot-modeling-drill`, `griot-project-doc-reviewer`
 
 ## 思考トレーニング（題材提供型: modeling 系）
 
