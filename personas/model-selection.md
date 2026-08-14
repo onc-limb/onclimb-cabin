@@ -48,17 +48,11 @@
 | jarvis-reading-notes | 継承 | キャプチャは軽いが、壁打ちの質はセッションモデルそのもの |
 | jarvis-capture | 継承 | 深掘りインタビューの質問の質が本体（一問一答の定型作業ではない） |
 
-### friday（共有ドキュメント系）
+### friday（対外発信・公開ドキュメント系）
 
 | スキル | 指定 | 理由・委任 |
 |---|---|---|
-| friday-doc-planner | 継承（opus 以上推奨） | 目的・読み手・構成を確定する対話ヒアリングと種類判定が本体 |
-| friday-giziroku | ピン sonnet | 抽出・テンプレ流し込みが本体。マスキング漏れを観測したらピンを外す |
-| friday-daily-report | ピン sonnet | 固定テンプレの脱専門用語清書 |
-| friday-proposal-generator | 継承（opus 以上推奨） | 見積・タスク分解の判断とクライアント向け品質 |
 | friday-tech-article-drafter | 継承（opus / fable 推奨） | 公開文章の品質が本体 |
-| friday-design-doc-generator | 継承 | コード調査は codebase-reader（sonnet）へ委任、本文はセッションモデル |
-| friday-procedure-doc-generator | 継承 | 手順・コマンドの正確性が本体（誤ったコマンドの実害が大きい）。操作の採取は codebase-reader（sonnet）へ委任可 |
 | friday-skillset-writer | 継承（opus / fable 推奨） | 外部公開するプロフィール文章の品質と誇張・機密混入の判定が本体 |
 
 ### arc-reactor（コーディング・レビュー系）— 全スキル継承（ピンしない）
