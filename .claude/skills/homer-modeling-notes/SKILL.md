@@ -1,20 +1,20 @@
 ---
-name: jarvis-modeling-notes
+name: homer-modeling-notes
 description: >-
-  ソフトウェア設計・ドメインモデリングで考えた思考の過程を記録し、ブログのモデリング記事(こういう場面で・こう考えて・こういう教訓を得た)の材料にする。やることは 3 つ — ①気づきを 1 テーマ 1 ノートに時系列で積む、②壁打ち相手になり(結論を出して終わりにせず問いで深掘る)区切りで論点・選択肢・ユーザーの結論を出所付きで記録する、③記事執筆時に骨子を一緒に確認し下書きに指摘を返す。記事本文はユーザー自身が書く。「モデリングメモして」「集約の切り方について壁打ちしたい」「値オブジェクトにするか迷ってる」「この下書きレビューして」等の明示依頼時のみ起動(自動起動しない)。読書メモは jarvis-reading-notes の領分。
+  ソフトウェア設計・ドメインモデリングで考えた思考の過程を記録し、ブログのモデリング記事(こういう場面で・こう考えて・こういう教訓を得た)の材料にする。やることは 3 つ — ①気づきを 1 テーマ 1 ノートに時系列で積む、②壁打ち相手になり(結論を出して終わりにせず問いで深掘る)区切りで論点・選択肢・ユーザーの結論を出所付きで記録する、③記事執筆時に骨子を一緒に確認し下書きに指摘を返す。記事本文はユーザー自身が書く。「モデリングメモして」「集約の切り方について壁打ちしたい」「値オブジェクトにするか迷ってる」「この下書きレビューして」等の明示依頼時のみ起動(自動起動しない)。読書メモは homer-reading-notes の領分。
 model: sonnet
 effort: medium
 metadata:
   type: skill
   data_dir: <repo>/modeling-notes
-  pairs_with: jarvis-reading-notes, friday-tech-article-drafter
+  pairs_with: homer-reading-notes, pepper-tech-article-drafter
 ---
 
 # modeling-notes — モデリング思考の記録と壁打ち
 
 ソフトウェアアーキテクチャ・ドメインモデリング・OOP 設計について**考えた思考の過程**を
 1 テーマ 1 ノートで積み上げ、homepage ブログのモデリング記事の材料にするスキル。
-persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自分・過程を残す・平準化しない）。
+persona: [`personas/homer.md`](../../../personas/homer.md)（読み手は自分・過程を残す・平準化しない）。
 
 ## ゴール
 
@@ -33,7 +33,7 @@ persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自�
 
 ## 設計思想
 
-[jarvis-reading-notes](../jarvis-reading-notes/SKILL.md) の「続かないを仕組みで潰す」を踏襲する:
+[homer-reading-notes](../homer-reading-notes/SKILL.md) の「続かないを仕組みで潰す」を踏襲する:
 
 1. **記録のハードルは 1 断片** — 「これメモして」の一言で追記が完了する。場面の説明や
    教訓の言語化を最初から求めない（積み上がってから整えばよい）。
@@ -60,14 +60,14 @@ persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自�
 | 起動する発話の例 | 起動しない |
 |---|---|
 | 「モデリングメモして」「この気づきをモデリングノートに」 | 実装作業そのもの（通常の開発） |
-| 「集約の切り方について壁打ちしたい」「値オブジェクトにするか迷ってる」 | DB スキーマ設計の実務 → arc-reactor-db-schema-designer |
-| 「モデリングノートから記事を書きたい」「記事のネタある？」 | API 設計の実務 → arc-reactor-api-designer |
-| 「この下書き読んでフィードバックして」 | 本の読書メモ全般 → jarvis-reading-notes |
-| 「モデリングノート一覧」「あの論点どこまで考えたっけ」 | 記事ドラフトの生成 → friday-tech-article-drafter |
+| 「集約の切り方について壁打ちしたい」「値オブジェクトにするか迷ってる」 | DB スキーマ設計の実務 → edith-db-design（onclimb-industries 側） |
+| 「モデリングノートから記事を書きたい」「記事のネタある？」 | API 設計の実務 → 業務側（onclimb-industries）の通常作業 |
+| 「この下書き読んでフィードバックして」 | 本の読書メモ全般 → homer-reading-notes |
+| 「モデリングノート一覧」「あの論点どこまで考えたっけ」 | 記事ドラフトの生成 → pepper-tech-article-drafter |
 
 境界の運用:
 
-- **jarvis-reading-notes との境界**: 本の記録は書籍ノートが正本。ただし読書から
+- **homer-reading-notes との境界**: 本の記録は書籍ノートが正本。ただし読書から
   モデリングの論点が立ち上がったら、本スキルのノートにも「出典: 『書名』p.N」付きで
   思考を積んでよい（両ノートから相互に `[[リンク]]` して構わない）。
 - **arc-reactor 系との境界**: 実プロジェクトの設計作業は各スキル・通常開発で行う。
@@ -135,7 +135,7 @@ persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自�
 4. 公開されたら frontmatter の status を `published` にし、`article:` に記事の
    URL / パスを記録する（homepage リポジトリ側への書き込みはしない）。
 5. ドラフト生成まで任せたいと言われたときのみ、
-   [friday-tech-article-drafter](../friday-tech-article-drafter/SKILL.md) へ引き渡す
+   [pepper-tech-article-drafter](../pepper-tech-article-drafter/SKILL.md) へ引き渡す
    （本スキルのノートを出典として渡す）。
 
 ## D. 一覧・再開
@@ -147,7 +147,7 @@ persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自�
 
 ---
 
-## 品質・安全性（persona: jarvis 準拠）
+## 品質・安全性（persona: homer 準拠）
 
 - **案件由来の場面は一般化して書く**。顧客名・案件名・社内固有の識別子はノートに書かず、
   「業務ドメインの一般化した説明」（例: 「予約系サービスの在庫引当」）に置き換える。

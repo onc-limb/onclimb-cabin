@@ -35,39 +35,19 @@
 
 「ピン sonnet」= SKILL.md frontmatter に `model: sonnet` を記載済み。「継承」= 記載なし（セッションモデル）。
 
-### jarvis（作業記録・一次資料系）
+### homer（一次資料・ノート系）
 
 | スキル | 指定 | 理由・ステップ単位の委任 |
 |---|---|---|
-| jarvis-worklog | ピン sonnet | 収集・分類・集計はスクリプト。整理は定型フォーマット |
-| jarvis-record | ピン sonnet | 固定見出しへの整理と確認対話 |
-| jarvis-knowledge-base | ピン sonnet | digest → Obsidian ノートの定型変換 |
-| jarvis-todo-management | ピン sonnet | 台帳操作はスクリプト。マッチング・分割提案は軽い判断 |
-| jarvis-todo-prioritizer | 継承（opus 以上推奨） | 影響度・緊急度の判断と壁打ちが本体。外部期限の裏取り検索は sonnet 委任可。スコア計算・並べ替えはスクリプト |
-| jarvis-issue-planner | 継承（opus 以上推奨） | スコープ・受け入れ条件の判断が本体。コード調査は codebase-reader（sonnet 固定済み）へ委任 |
-| jarvis-reading-notes | 継承 | キャプチャは軽いが、壁打ちの質はセッションモデルそのもの |
-| jarvis-capture | 継承 | 深掘りインタビューの質問の質が本体（一問一答の定型作業ではない） |
+| homer-reading-notes | 継承 | キャプチャは軽いが、壁打ちの質はセッションモデルそのもの |
+| homer-modeling-notes | 継承 | 思考の記録と観点フィードバックの質が本体 |
 
-### friday（対外発信・公開ドキュメント系）
+### pepper（対外発信・公開ドキュメント系）
 
 | スキル | 指定 | 理由・委任 |
 |---|---|---|
-| friday-tech-article-drafter | 継承（opus / fable 推奨） | 公開文章の品質が本体 |
-| friday-skillset-writer | 継承（opus / fable 推奨） | 外部公開するプロフィール文章の品質と誇張・機密混入の判定が本体 |
-
-### arc-reactor（コーディング・レビュー系）— 全スキル継承（ピンしない）
-
-コードの判断品質が本体のため一律ピンなし。opus 以上を推奨し、大規模・高リスク（本番 DB、
-マイグレーション、リリース判定）は fable を検討。共通の委任パターン:
-機械的な走査・列挙（ファイル探索、パターン grep、依存列挙）は haiku / sonnet サブエージェント、
-判定・重要度付け・設計はセッションモデル。
-
-| スキル | 備考 |
-|---|---|
-| code-review / tech-debt-auditor / release-readiness-checker | 指摘の判定はセッションモデル。候補スキャンのファンアウトは sonnet 委任可 |
-| codebase-onboarding / external-access-mapper / sequence-diagram-generator | 探索は codebase-reader（sonnet）委任。統合・図の妥当性判断はセッションモデル |
-| db-schema-designer / api-designer / infra-architecture-designer | 壁打ち設計が本体。opus 以上推奨 |
-| db-migration-safety-checker / slow-query-hunter / pr-splitter / env-doctor / test-scaffolder | 静的照合・分割は sonnet でも実用だが、見落としコストを考慮し継承のまま |
+| pepper-tech-article-drafter | 継承（opus / fable 推奨） | 公開文章の品質が本体 |
+| pepper-skillset-writer | 継承（opus / fable 推奨） | 外部公開するプロフィール文章の品質と誇張・機密混入の判定が本体 |
 
 ### ultron（事務・金融・資産系）
 
@@ -79,15 +59,7 @@
 | ultron-dividend-recorder | ピン sonnet | 配当書類の読み取りと台帳追記。検算・集計はスクリプト |
 | ultron-high-dividend-stock-screener | ピン sonnet | 公開情報の収集・機械的な篩い。銘柄ごとの個別取得は haiku 委任可 |
 | ultron-contract-review-assistant | 継承（opus 以上推奨） | 条項リスクの見落としコストが大きい |
-
-### edith（調査・データ収集・分析系）
-
-| スキル | 指定 | 理由・委任 |
-|---|---|---|
-| edith-freelance-rate-research | ピン sonnet | 公開統計の収集・レンジ整理 |
-| edith-tech-selection-research | 継承（opus 以上推奨） | 7 軸評価と推奨判断が本体。候補ごとの情報収集は sonnet 委任 |
-| edith-competitor-market-scan | 継承 | 個別競合の調査は sonnet 委任、横断統合はセッションモデル |
-| edith-product-discovery | 継承（opus / fable 推奨） | 発想と壁打ちの質が本体。コード調査は codebase-reader（sonnet） |
+| ultron-freelance-rate-research | ピン sonnet | 公開統計の収集・レンジ整理 |
 
 ### griot（練習・コーチング系）
 
@@ -96,13 +68,13 @@
 | griot-modeling-drill | ピン sonnet | 題材の生成（日次小課題 + 月次ドメイン課題）。正解を出さない設計 |
 | griot-project-doc-reviewer | 継承（opus 以上推奨） | 観点照合の判定と見落としコストが本体。プレイブック読み込みは軽いが、判定・引用・新観点の発見はセッションモデルの質に依存 |
 
-### karen（一時利用・汎用系）/ vision（プライベート・人間関係系）
+### vision（プライベート・人間関係系）
 
 | スキル | 指定 | 理由 |
 |---|---|---|
-| karen-meeting-prep-briefer | 継承 | スタンス案・想定問答の質を優先 |
-| karen-problem-essence-organizer | 継承（opus / fable 推奨） | 批判的な対話が本体 |
 | vision-people-memory | ピン sonnet | 会話からの抽出と台帳追記 |
+
+（業務側スキルの割り当ては onclimb-industries の personas/model-selection.md を参照）
 
 ## ステップ単位の委任パターン（スキル共通）
 

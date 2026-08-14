@@ -1,5 +1,5 @@
 ---
-name: jarvis-reading-notes
+name: homer-reading-notes
 description: >-
   読書の記録を残して公開用の読書メモの材料にする。やることは 2 つだけ — ①読んで気づいたこと・気になったことをユーザーの言葉のまま記録、②本の疑問に回答したうえで「疑問と回答」を記録。1 冊 = 1 ノートに時系列で積み、ユーザーが言っていないことは書かない。読了を強制せず断片のまま貯めて、読了時にまとめを生成する。「この本のここ気になるからメモして」「〇〇(書名)について壁打ちしたい」「この本どこまで読んだっけ」「積読・読書中の一覧見せて」「読み終わったからまとめて」等で起動(書名や本の話と分かる文脈が必要。本と無関係な技術質問では起動しない)。技術書の知見のナレッジ化は jarvis-knowledge-base の領分。
 model: sonnet
@@ -12,7 +12,7 @@ metadata:
 # reading-notes — 読書メモ台帳（投げるだけで積み上がる）
 
 読書メモを **1 冊 = 1 ノートの台帳**に断片のまま積むスキル。
-persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自分・過程を残す・平準化しない）。
+persona: [`personas/homer.md`](../../../personas/homer.md)（読み手は自分・過程を残す・平準化しない）。
 
 ## ゴール
 
@@ -149,7 +149,7 @@ persona: [`personas/jarvis.md`](../../../personas/jarvis.md)（読み手は自�
    （「もっとメモしておけば」という反省をユーザーに返さない）。
 3. 技術書なら、まとめを [jarvis-knowledge-base](../jarvis-knowledge-base/SKILL.md) の vault へ
    反映するか提案する（実行はユーザーが決める）。記事ネタになりそうなら
-   friday-tech-article-drafter の存在も一言添える。
+   pepper-tech-article-drafter の存在も一言添える。
 4. 「実務で試したいこと」が出たら ToDo 台帳への収穫を提案する
    （`todo.py add --status inbox --source-type research --source-ref <ノートパス>`。追記したら一言通知）。
 

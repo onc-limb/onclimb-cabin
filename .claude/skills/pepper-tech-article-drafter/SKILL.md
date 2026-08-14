@@ -1,5 +1,5 @@
 ---
-name: friday-tech-article-drafter
+name: pepper-tech-article-drafter
 description: >-
   ブログ・登壇向けの技術記事ドラフトを生成する。worklog の tech digest や knowledge-base をネタ元に、ネタ選定 → 構成の提案と合意 → ドラフト → 清書(AI 感除去) → 機密マスキング → 公開前チェックリストの 6 段階で articles/ に出力する。顧客名・案件名・社内 URL・API キー・個人名は必ず匿名化し、機械チェックとチェックリスト全項目の確認を通過するまで「公開可」としない。「ブログ記事のドラフト書いて」「今月の作業から技術記事のネタ探して」「登壇ネタになりそうな話まとめて」「このドラフト、公開前チェックして」等の明示依頼時のみ起動(自動起動しない)。friday-doc-planner の doc brief を渡された場合は構成提案から始める(マスキングと公開前チェックは省略しない)。
 model: sonnet
@@ -54,7 +54,7 @@ jarvis-knowledge-base の vault に溜まった知見を、**不特定多数の�
 ## doc brief 連携（Stage 1 として動く場合）
 
 前段の friday-doc-planner（Stage 0。onclimb-industries 側のスキル）の doc brief が渡された場合は、
-[`personas/friday.md`](../../../personas/friday.md) の「doc brief 連携（Stage 1 生成スキル共通）」に
+[`personas/pepper.md`](../../../personas/pepper.md) の「doc brief 連携（Stage 1 生成スキル共通）」に
 従う（確定済み項目の再確認省略 / 骨組み以降が本スキルの担当 / brief 無し単体起動も可）。
 確定済みなら標準フロー 1〜2 の重複する確認を省略するが、見出しレベルの構成＝骨組みは
 このスキルの担当なので、構成の最終合意は従来どおり取る。
@@ -137,7 +137,7 @@ jarvis-knowledge-base の vault に溜まった知見を、**不特定多数の�
 媒体（blog / Zenn / Qiita / 登壇メモ）による差はタイトルの付け方・文体・コードブロック方言の範囲にとどめ、
 骨子は変えない。
 
-## 品質・安全性（persona: friday 準拠）
+## 品質・安全性（persona: pepper 準拠）
 
 - 事実に基づいて書く。出典（digest / vault）に無い情報を創作しない。推測で補った箇所はその旨を明示する。
 - 機密情報（API キー・トークン・顧客名・案件名・社内 URL）を出力に含めない。

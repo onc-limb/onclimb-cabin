@@ -1,7 +1,7 @@
 ---
-name: friday-skillset-writer
+name: pepper-skillset-writer
 description: >-
-  knowledge-base(技術ナレッジ vault)を主入力に、homepage に掲載するスキルセット紹介文を生成・更新する。技術ごとのスキルページ(経験・知識・レベル)の執筆と、プロフィールのスキルセット紹介文の整形を担い、capture-data の経験ノートや worklog の digest を補助入力に、根拠のある記述だけを公開向けに清書する。「homepage のスキルセットを書いて/更新して」「スキルページを埋めて」「NestJS のスキル紹介を書いて」等の明示依頼時のみ起動(自動起動しない)。ナレッジの蓄積自体は jarvis-knowledge-base、技術記事化は friday-tech-article-drafter の領分。
+  knowledge-base(技術ナレッジ vault)を主入力に、homepage に掲載するスキルセット紹介文を生成・更新する。技術ごとのスキルページ(経験・知識・レベル)の執筆と、プロフィールのスキルセット紹介文の整形を担い、capture-data の経験ノートや worklog の digest を補助入力に、根拠のある記述だけを公開向けに清書する。「homepage のスキルセットを書いて/更新して」「スキルページを埋めて」「NestJS のスキル紹介を書いて」等の明示依頼時のみ起動(自動起動しない)。ナレッジの蓄積自体は jarvis-knowledge-base、技術記事化は pepper-tech-article-drafter の領分。
 model: sonnet
 effort: medium
 ---

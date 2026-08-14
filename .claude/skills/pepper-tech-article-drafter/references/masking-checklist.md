@@ -1,6 +1,6 @@
 # 機密マスキングルール & 公開前チェックリスト
 
-friday-tech-article-drafter のステップ 4（機密マスキング）・ステップ 5（公開前チェック）の実体。
+pepper-tech-article-drafter のステップ 4（機密マスキング）・ステップ 5（公開前チェック）の実体。
 **このファイルの項目を全通過するまで、draft.md の `status` を `ready-to-publish` にしてはならない。**
 
 ## 前提（多層防御）

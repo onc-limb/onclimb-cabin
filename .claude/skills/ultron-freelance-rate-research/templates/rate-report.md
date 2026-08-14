@@ -1,7 +1,7 @@
 # フリーランス単価相場レポート — {{role}}（{{region}}）
 
 - 作成日: {{report_date}}
-- 作成: edith-freelance-rate-research（公開情報の整理。相場の保証・交渉助言ではない → 末尾 §免責）
+- 作成: ultron-freelance-rate-research（公開情報の整理。相場の保証・交渉助言ではない → 末尾 §免責）
 
 ## 調査条件
 

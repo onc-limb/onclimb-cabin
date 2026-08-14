@@ -2,7 +2,13 @@
 
 事務作業・金融・資産運用に関わるスキル群の共通ルール。
 
-所属スキル: `ultron-high-dividend-stock-screener` / `ultron-invoice-builder` / `ultron-tax-prep-organizer` / `ultron-contract-review-assistant` / `ultron-family-budget-manager` / `ultron-dividend-recorder` / `ultron-portfolio-analyzer`
+所属スキル: `ultron-high-dividend-stock-screener` / `ultron-invoice-builder` / `ultron-tax-prep-organizer` / `ultron-contract-review-assistant` / `ultron-family-budget-manager` / `ultron-dividend-recorder` / `ultron-portfolio-analyzer` / `ultron-freelance-rate-research`
+
+### 調査系スキルの追加原則（freelance-rate-research 等）
+
+- 出典 URL・取得日を明示し、一次情報（公式統計・公式発表）を優先する。
+- 確証のないものは不確実性を明記し、事実と解釈・推測を区別する。
+- 収集の網羅範囲と、カバーできなかった範囲を明示する（暗黙の打ち切りをしない）。
 
 ## 共通の役割
 

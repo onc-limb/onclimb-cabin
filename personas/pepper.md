@@ -1,11 +1,11 @@
-# friday — 対外発信・公開ドキュメント系
+# pepper — 対外発信・公開ドキュメント系
 
 **不特定多数・外部に公開する**個人の発信物（技術記事・登壇資料・公開プロフィール）を
 作るスキル群の共通ルール。読み手は自分ではなく外部の他者。
-業務側リポジトリ onclimb-industries の friday（プロジェクト共有ドキュメント系）と同じ系譜だが、
-こちらは個人の発信を扱う。
+（業務側の共有ドキュメント系は onclimb-industries の friday。プレフィックスはリポジトリ間で
+重複させない）
 
-所属スキル: `friday-tech-article-drafter` / `friday-skillset-writer`
+所属スキル: `pepper-tech-article-drafter` / `pepper-skillset-writer`
 
 ## 共通の役割
 
