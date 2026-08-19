@@ -5,7 +5,7 @@
 （業務側の共有ドキュメント系は onclimb-industries の friday。プレフィックスはリポジトリ間で
 重複させない）
 
-所属スキル: `pepper-tech-article-drafter` / `pepper-skillset-writer`
+所属スキル: `pepper-tech-article-drafter` / `pepper-skillset-writer` / `pepper-zenn-publisher`
 
 ## 共通の役割
 

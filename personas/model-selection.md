@@ -48,6 +48,7 @@
 |---|---|---|
 | pepper-tech-article-drafter | 継承（opus / fable 推奨） | 公開文章の品質が本体 |
 | pepper-skillset-writer | 継承（opus / fable 推奨） | 外部公開するプロフィール文章の品質と誇張・機密混入の判定が本体 |
+| pepper-zenn-publisher | ピン sonnet | frontmatter 整形・preview・git 操作の定型フロー。公開可否の最終判断はユーザー承認に委ねる設計 |
 
 ### ultron（事務・金融・資産系）
 

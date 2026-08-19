@@ -45,6 +45,7 @@
 | `vision-people-memory` | プライベート・人間関係系 |
 | `pepper-tech-article-drafter` | 対外発信・公開ドキュメント系 |
 | `pepper-skillset-writer` | 対外発信・公開ドキュメント系 |
+| `pepper-zenn-publisher` | 対外発信・公開ドキュメント系 |
 
 ## 補足
 

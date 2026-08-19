@@ -46,3 +46,6 @@ __pycache__/
 
 # tech-article-drafter: 記事ドラフト・NG ワード辞書（ドラフト段階では機密が残りうる・辞書は実名を含むため追跡しない）
 /articles/
+
+# zenn-publisher: Zenn 記事公開リポジトリの clone（正本は GitHub の onc-limb/knowledge-hub。独立した git リポジトリのため追跡しない）
+/knowledge-hub/
