@@ -1,7 +1,7 @@
 ---
 name: ultron-high-dividend-stock-screener
 description: >-
-  日本の高配当株を screening して候補リストを作る。公開情報(Yahoo!ファイナンス / IR BANK 等)から配当利回り 4% 以上の銘柄を拾い、健全性(5年減配なし・配当性向 50% 未満・10年営業黒字・売上と EPS が右肩上がり・自己資本比率 40% 以上・営業CF黒字)と上昇余地(増配率と EPS 成長率が年 5% 以上・ROE 8% 以上)のコア 11 条件で篩い、REIT / 投資法人 / インフラF を除外する。調べた会社は法人番号で台帳に記録し、回を分けて積み増せる。「高配当株のおすすめをリストにして」「配当利回り4%以上の日本株を screening して」「前回の続きから調べて」等の明示依頼時のみ起動(自動起動しない)。投資助言ではなく情報整理。
+  日本の高配当株を screening して候補リストを作る。公開情報(Yahoo!ファイナンス / IR BANK 等)から配当利回り 4% 以上の銘柄を拾い、健全性(5年減配なし・配当性向 50% 未満・10年営業黒字・売上と EPS が右肩上がり・自己資本比率 40% 以上・営業CF黒字)と上昇余地(増配率と EPS 成長率が年 5% 以上・ROE 8% 以上)に加え、実績の死角を補う 4 軸(FCFベース配当性向 100% 未満・有利子負債が営業CF の 5 年分以下・株式の希薄化なし・会社予想に減配や赤字なし)のコア 15 条件で篩い、REIT / 投資法人 / インフラF を除外する。調べた会社は法人番号で台帳に記録し、回を分けて積み増せる。「高配当株のおすすめをリストにして」「配当利回り4%以上の日本株を screening して」「前回の続きから調べて」等の明示依頼時のみ起動(自動起動しない)。投資助言ではなく情報整理。
 model: sonnet
 effort: medium
 metadata:
@@ -13,7 +13,9 @@ metadata:
 
 公開情報から**配当利回り 4% 以上**の日本株を拾い、**健全性**（5年減配なし・配当性向50%未満・10年営業黒字・
 売上/EPS 右肩上がり(5年)・自己資本比率40%以上・営業CF黒字(10年)）と**株価上昇余地**（増配率・EPS成長率が
-年5%以上・ROE 8%以上）のコア11条件（定義は `references/screening_rules.md`）で篩って
+年5%以上・ROE 8%以上）、さらに**実績の死角の補完**（FCFベース配当性向100%未満(3期合計)・
+有利子負債÷営業CF 5年以下・発行済株式数の希薄化 +5%以内(5期)・会社予想に減配/赤字なし）の
+コア15条件（定義は `references/screening_rules.md`）で篩って
 **おすすめ候補リスト**を作る。投資目的は「配当 4.5% + 数年トータルで株価 +20%」の両取り。一度に全銘柄は調べきれないため、
 **調べた会社を法人番号で台帳に記録**して回を分けて積み増し、最後に **Claude のレビュー**を添える。
 
@@ -53,7 +55,7 @@ metadata:
 ## 標準フロー（「高配当株のおすすめをリストにして」の一声で）
 
 ```bash
-SKILL=/Users/satoshi-onga/Documents/onclimb-industries/.claude/skills/ultron-high-dividend-stock-screener
+SKILL=/Users/satoshi-onga/Documents/onclimb-cabin/.claude/skills/ultron-high-dividend-stock-screener
 TODAY=$(python3 -c "import datetime,zoneinfo;print(datetime.datetime.now(zoneinfo.ZoneInfo('Asia/Tokyo')).date())")
 python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続きの起点）
 ```
@@ -85,7 +87,9 @@ python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続�
    - ページを進めて**利回りが閾値未満に達したら母集団は消化済み**。その旨をユーザーに報告して終了する
      （台帳リセットや閾値変更は勝手にしない）。
 4. **1 社ずつ健全性データを取得**: 各社について IR BANK 等から **配当推移(5期) / 営業利益推移(10期) /
-   営業CF推移(10期) / 売上推移(5期) / EPS推移(5期) / 自己資本比率 / ROE / 配当性向 / 利回り**を取得し、
+   営業CF推移(10期) / 売上推移(5期) / EPS推移(5期) / 自己資本比率 / ROE / 配当性向 / 利回り**、
+   さらに条件12〜15用に **投資CF(3期) / 配当金支払額(3期・正の数) / 有利子負債(最新期) /
+   発行済株式数(5期) / 今期会社予想の1株配当と EPS** を取得し、
    1 社 = 1 JSON（古い→新しいの時系列、出所 `sources`）に整形して配列にまとめる。取れない値は null（未取得）。
    あわせて **PER・時価総額**も取れれば控えておく（合否には使わない。レビューのランキング材料。手順 9 参照）。
    **株式分割・併合をまたぐ配当・EPS の推移は分割調整後の値に換算**してから渡す（換算できなければ「要再確認」で保留。
@@ -97,6 +101,9 @@ python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続�
      "op_cf_history":[26000,28000,30000,29000,31000,30000,29000,35000,37000,45000],
      "revenue_history":[275000,299000,313000,372000,451000],
      "eps_history":[140,160,170,180,205],
+     "inv_cf_history":[-15000,-16000,-18000],"dividends_paid_history":[6000,7000,8000],
+     "interest_bearing_debt":120000,"shares_history":[14000,13800,13600,13500,13400],
+     "forecast_dividend":80,"forecast_eps":215,
      "sources":["https://...yahoo...","https://...irbank..."]}]
    ```
 5. **判定（決定論）**: 上記 JSON を `judge.py` に渡し合否を得る。
@@ -106,6 +113,7 @@ python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続�
    #   --dividend-periods 5 --allow-cuts 0 --op-profit-periods 10 --op-cf-periods 10
    #   --revenue-periods 5 --allow-revenue-declines 1 --eps-periods 5 --allow-eps-declines 1
    #   --dividend-cagr-min 5 --eps-cagr-min 5
+   #   --fcf-periods 3 --fcf-payout-max 100 --debt-opcf-max 5 --shares-periods 5 --shares-dilution-max 5
    ```
 6. **法人番号を解決**: 調べた**全銘柄（合否に関わらず）**の証券コードを `resolve_corp.py` で法人番号に変換。
    ```bash
@@ -144,7 +152,8 @@ python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続�
 - **台帳の更新**: `python3 "$SKILL/bin/registry.py" update --stdin`（既存行を置換。再検証・mode=new の再調査結果の反映用）
 - **判定**: `python3 "$SKILL/bin/judge.py" --stdin`（or `--file`。`--yield-min/--payout-max/--equity-min/--roe-min/
   --dividend-periods/--allow-cuts/--op-profit-periods/--op-cf-periods/--revenue-periods/
-  --allow-revenue-declines/--eps-periods/--allow-eps-declines/--dividend-cagr-min/--eps-cagr-min` で上書き）
+  --allow-revenue-declines/--eps-periods/--allow-eps-declines/--dividend-cagr-min/--eps-cagr-min/
+  --fcf-periods/--fcf-payout-max/--debt-opcf-max/--shares-periods/--shares-dilution-max` で上書き）
 - **法人番号解決**: `python3 "$SKILL/bin/resolve_corp.py" [--refresh] [--stdin] <証券コード...>`
 
 ## バッチで打ち切り、続きは次回
@@ -165,9 +174,10 @@ python3 "$SKILL/bin/registry.py" status     # 0) 台帳の累計を確認（続�
 
 運用で磨くのは **取得メモ（`references/site_structure.md`）/ 除外ルール（`config/screener.yaml` + `references/screening_rules.md`）/
 レビュー観点（`references/review_checklist.md`）**。取得失敗・REIT 誤混入・レビューの見落としが出たら該当ファイルに追記する。
-**固定（勝手に変えない）**: コア11条件のしきい値（利回り4% / 5年減配なし / 配当性向50% / 10年営業黒字 /
+**固定（勝手に変えない）**: コア15条件のしきい値（利回り4% / 5年減配なし / 配当性向50% / 10年営業黒字 /
 売上右肩上がり5年 / 自己資本比率40% / EPS右肩上がり5年 / 営業CF黒字10年 /
-増配率 年5% / EPS成長率 年5% / ROE 8%）。変更はユーザー指定でのみ。
+増配率 年5% / EPS成長率 年5% / ROE 8% / FCF配当性向100%未満(3期合計) / 有利子負債÷営業CF 5年以下 /
+株式数の希薄化 +5%以内(5期) / 会社予想に減配・赤字なし）。変更はユーザー指定でのみ。
 
 ## 注意
 

@@ -61,6 +61,7 @@
 | ultron-high-dividend-stock-screener | ピン sonnet | 公開情報の収集・機械的な篩い。銘柄ごとの個別取得は haiku 委任可 |
 | ultron-contract-review-assistant | 継承（opus 以上推奨） | 条項リスクの見落としコストが大きい |
 | ultron-freelance-rate-research | ピン sonnet | 公開統計の収集・レンジ整理 |
+| ultron-company-research | ピン sonnet | 公開情報の収集・整理。ソース別の取得は research/haiku 委任可 |
 
 ### griot（練習・コーチング系）
 

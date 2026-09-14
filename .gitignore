@@ -36,6 +36,9 @@
 # tax-prep-organizer: 取引データ・科目別集計（個人の金銭情報を含むため追跡しない）
 /tax-data/
 
+# company-research: 商談前の企業調査レポート（案件・商談相手の情報を含むため追跡しない）
+/company-research-data/
+
 # Python: バイトコードキャッシュ・仮想環境（スクリプト実行時の副産物のため追跡しない）
 __pycache__/
 *.pyc

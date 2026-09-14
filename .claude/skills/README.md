@@ -40,6 +40,7 @@
 | `ultron-high-dividend-stock-screener` | 事務・金融・資産系 |
 | `ultron-portfolio-analyzer` | 事務・金融・資産系 |
 | `ultron-freelance-rate-research` | 事務・金融・資産系 |
+| `ultron-company-research` | 事務・金融・資産系 |
 | `griot-modeling-drill` | 練習・コーチング系 |
 | `griot-project-doc-reviewer` | 練習・コーチング系 |
 | `vision-people-memory` | プライベート・人間関係系 |

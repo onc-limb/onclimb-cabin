@@ -48,6 +48,11 @@ OVERRIDE_FLAGS = {
     "--dividend-cagr-min": ("dividend_cagr_min", float),
     "--eps-cagr-min": ("eps_cagr_min", float),
     "--roe-min": ("roe_min", float),
+    "--fcf-periods": ("fcf_periods", int),
+    "--fcf-payout-max": ("fcf_payout_max", float),
+    "--debt-opcf-max": ("debt_opcf_max", float),
+    "--shares-periods": ("shares_periods", int),
+    "--shares-dilution-max": ("shares_dilution_max", float),
 }
 
 
@@ -82,7 +87,9 @@ def main(argv):
             " [--op-profit-periods N] [--op-cf-periods N]"
             " [--revenue-periods N] [--allow-revenue-declines N]"
             " [--eps-periods N] [--allow-eps-declines N]"
-            " [--dividend-cagr-min N] [--eps-cagr-min N] [--roe-min N]\n")
+            " [--dividend-cagr-min N] [--eps-cagr-min N] [--roe-min N]"
+            " [--fcf-periods N] [--fcf-payout-max N] [--debt-opcf-max N]"
+            " [--shares-periods N] [--shares-dilution-max N]\n")
         return 2
 
     try:
@@ -114,6 +121,11 @@ def main(argv):
             "dividend_cagr_min": L.config_value(cfg, "dividend_cagr_min", 5.0),
             "eps_cagr_min": L.config_value(cfg, "eps_cagr_min", 5.0),
             "roe_min": L.config_value(cfg, "roe_min", 8.0),
+            "fcf_periods": L.config_value(cfg, "fcf_periods", 3),
+            "fcf_payout_max": L.config_value(cfg, "fcf_payout_max", 100.0),
+            "debt_opcf_max": L.config_value(cfg, "debt_opcf_max", 5.0),
+            "shares_periods": L.config_value(cfg, "shares_periods", 5),
+            "shares_dilution_max": L.config_value(cfg, "shares_dilution_max", 5.0),
         },
         "judged": len(results),
         "passed": len(passed),

@@ -3,7 +3,9 @@
 > ⚠️ **免責**: 本リストは公開情報の整理であって**投資助言ではありません**。数値は取得時点のもので将来を保証しません。
 > 「おすすめ」は本スキルの条件（利回り {{YIELD_MIN}}%以上 / 5年減配なし / 配当性向 {{PAYOUT_MAX}}%未満 / 10年営業黒字 /
 > 売上・EPS 右肩上がり(5年) / 自己資本比率 {{EQUITY_MIN}}%以上 / 営業CF 黒字(10年) /
-> 増配率・EPS成長率 年{{DIVIDEND_CAGR_MIN}}%以上 / ROE {{ROE_MIN}}%以上 / REIT等除外）に
+> 増配率・EPS成長率 年{{DIVIDEND_CAGR_MIN}}%以上 / ROE {{ROE_MIN}}%以上 /
+> FCF配当性向 {{FCF_PAYOUT_MAX}}%未満(3期合計) / 有利子負債÷営業CF {{DEBT_OPCF_MAX}}年以下 /
+> 株式数の希薄化 +{{SHARES_DILUTION_MAX}}%以内(5期) / 会社予想に減配・赤字なし / REIT等除外）に
 > 合致した「候補」の意味です。最終判断は自己責任で、発注前に一次情報（IR・有報）で再確認してください。
 
 - 取得日: {{DATE}}
@@ -11,14 +13,16 @@
   営業利益 直近{{OP_PROFIT_PERIODS}}期 黒字 / 営業CF 直近{{OP_CF_PERIODS}}期 黒字 /
   売上 減少 {{ALLOW_REVENUE_DECLINES}} 回以下(直近{{REVENUE_PERIODS}}期) / EPS 減少 {{ALLOW_EPS_DECLINES}} 回以下(直近{{EPS_PERIODS}}期) /
   自己資本比率 ≧ {{EQUITY_MIN}}% / 増配率 ≧ 年{{DIVIDEND_CAGR_MIN}}% / EPS成長率 ≧ 年{{EPS_CAGR_MIN}}% /
-  ROE ≧ {{ROE_MIN}}% / REIT・投資法人・インフラF 除外
+  ROE ≧ {{ROE_MIN}}% / FCF配当性向 < {{FCF_PAYOUT_MAX}}%(直近{{FCF_PERIODS}}期合計) /
+  有利子負債÷営業CF ≦ {{DEBT_OPCF_MAX}}年 / 発行済株式数 +{{SHARES_DILUTION_MAX}}%以内(直近{{SHARES_PERIODS}}期) /
+  会社予想 減配・赤字なし / REIT・投資法人・インフラF 除外
 - 今回の調査: {{N_SCREENED}} 社調査 / 合格 {{N_PASSED}} 社 / 台帳 累計 {{N_TOTAL}} 社
 
 ## 合格銘柄
 
-| コード | 社名 | 利回り% | 配当性向% | ROE% | 自己資本比率% | 配当推移(円) | PER(参考) | 業種 | 出典 |
-|---|---|---|---|---|---|---|---|---|---|
-| {{TICKER}} | {{NAME}} | {{YIELD}} | {{PAYOUT}} | {{ROE}} | {{EQUITY}} | {{DIV_HISTORY}} | {{PER}} | {{SECTOR}} | [1] |
+| コード | 社名 | 利回り% | 配当性向% | FCF配当性向% | ROE% | 自己資本比率% | 負債÷営業CF(年) | 配当推移(円) | PER(参考) | 業種 | 出典 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| {{TICKER}} | {{NAME}} | {{YIELD}} | {{PAYOUT}} | {{FCF_PAYOUT}} | {{ROE}} | {{EQUITY}} | {{DEBT_OPCF}} | {{DIV_HISTORY}} | {{PER}} | {{SECTOR}} | [1] |
 
 <!-- 合格銘柄を 1 行ずつ追記。値が未取得のセルは「未取得」と書き、捏造しない。
      配当推移(円)は古い→新しいの実数を `40→42→45→48→50` の形式で書く（判定根拠がそのまま読める）。

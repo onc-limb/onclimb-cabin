@@ -485,6 +485,143 @@ def _check_all_positive(checks, insufficient, key, history, periods, label):
     }
 
 
+def _check_fcf_payout(checks, insufficient, data, periods, max_pct):
+    """条件12: FCF ベース配当性向（直近 periods 期合計の配当支払額 ÷ 同期間合計 FCF）< 上限。
+    EPS 基準の配当性向(条件3)では「利益は出ているが現金では配当を賄えていない」銘柄を
+    検知できないため、現金ベースの配当余力を別軸で見る。
+    FCF = 営業CF + 投資CF（投資CF は通常マイナスの値をそのまま渡す）。
+    配当支払額(dividends_paid_history)は CF 計算書の支払額を正の数に直して渡す。
+    // ASSUMPTION: 大型投資の年で単年 FCF が凹むぶれを均すため 3 期合計で評価する（運用細則は要ユーザー確認）。"""
+    key = "fcf_payout"
+    _, op_cf = _recent_window(data.get("op_cf_history"), periods)
+    _, inv_cf = _recent_window(data.get("inv_cf_history"), periods)
+    _, paid = _recent_window(data.get("dividends_paid_history"), periods)
+    value = {"op_cf": op_cf, "inv_cf": inv_cf, "dividends_paid": paid}
+    if len(op_cf) < periods or len(inv_cf) < periods or len(paid) < periods:
+        checks[key] = {
+            "ok": False, "value": value,
+            "detail": "営業CF/投資CF/配当支払額のいずれかが %d 期未満(欠損含む)" % periods,
+        }
+        insufficient.append(key)
+        return
+    total_paid = sum(paid)
+    if total_paid < 0:
+        checks[key] = {
+            "ok": False, "value": value,
+            "detail": "配当支払額が負値(正の数に直して渡す。要再確認)",
+        }
+        insufficient.append(key)
+        return
+    fcf = sum(op_cf) + sum(inv_cf)
+    if fcf <= 0:
+        checks[key] = {
+            "ok": False, "value": value,
+            "detail": "直近%d期合計の FCF が 0 以下(現金では配当を賄えていない)" % periods,
+        }
+        return
+    ratio = total_paid / float(fcf) * 100.0
+    checks[key] = {
+        "ok": ratio < max_pct, "value": round(ratio, 1),
+        "detail": "FCF配当性向 %.1f%% (直近%d期合計ベース, 上限 %.0f%%)" % (ratio, periods, max_pct),
+    }
+
+
+def _check_debt_coverage(checks, insufficient, data, max_years):
+    """条件13: 有利子負債 ÷ 営業CF（最新期）≦ max_years 年（債務償還年数）。
+    自己資本比率(条件6)は資本の厚みを見るが、総資産が大きい会社は比率が高くても
+    借入の絶対額が重いことがある。キャッシュ創出力に対する借入の重さを別軸で見る。
+    無借金(有利子負債 0)は文句なしの合格。
+    // ASSUMPTION: 分母は直近 1 期の営業CF（条件8 で 10 期黒字が担保されている前提の簡便法）。"""
+    key = "debt_opcf"
+    debt = data.get("interest_bearing_debt")
+    if not isinstance(debt, (int, float)):
+        checks[key] = {"ok": False, "value": None, "detail": "有利子負債未取得"}
+        insufficient.append(key)
+        return
+    if debt < 0:
+        checks[key] = {"ok": False, "value": debt, "detail": "有利子負債が負値(要再確認)"}
+        insufficient.append(key)
+        return
+    if debt == 0:
+        checks[key] = {"ok": True, "value": 0, "detail": "無借金(有利子負債 0)"}
+        return
+    _, op_cf = _recent_window(data.get("op_cf_history"), 1)
+    if not op_cf:
+        checks[key] = {"ok": False, "value": debt, "detail": "営業CF未取得で償還年数を算出不能"}
+        insufficient.append(key)
+        return
+    latest_cf = op_cf[-1]
+    if latest_cf <= 0:
+        checks[key] = {
+            "ok": False, "value": debt,
+            "detail": "最新期の営業CFが 0 以下で償還年数を算出不能",
+        }
+        return
+    years = debt / float(latest_cf)
+    checks[key] = {
+        "ok": years <= max_years + 1e-9, "value": round(years, 1),
+        "detail": "有利子負債÷営業CF %.1f年 (上限 %.1f年)" % (years, max_years),
+    }
+
+
+def _check_no_dilution(checks, insufficient, data, periods, max_increase_pct):
+    """条件14: 発行済株式数（自己株控除後が望ましい。分割調整後）が希薄化していない。
+    EPS 成長(条件10)は増資で株数が増えても利益総額の伸びで通ってしまうため、
+    1 株あたり価値の毀損(希薄化)を別軸で検査する。減少(自社株買い)は歓迎。
+    // ASSUMPTION: 端株・SO 行使程度のノイズとして期間累計 +5% までの増加は許容（運用細則は要ユーザー確認）。"""
+    key = "no_dilution"
+    window, numeric = _recent_window(data.get("shares_history"), periods)
+    if len(numeric) < periods:
+        checks[key] = {
+            "ok": False, "value": window,
+            "detail": "発行済株式数が %d 期未満(欠損含む)" % periods,
+        }
+        insufficient.append(key)
+        return
+    first, last = numeric[0], numeric[-1]
+    if first <= 0:
+        checks[key] = {
+            "ok": False, "value": window,
+            "detail": "発行済株式数の初期値が 0 以下(要再確認)",
+        }
+        insufficient.append(key)
+        return
+    change = (float(last) / float(first) - 1.0) * 100.0
+    checks[key] = {
+        "ok": change <= max_increase_pct + 1e-9, "value": round(change, 1),
+        "detail": "発行済株式数 直近%d期で %+.1f%% (増加の許容 +%.0f%%まで)" % (periods, change, max_increase_pct),
+    }
+
+
+def _check_forecast(checks, insufficient, data):
+    """条件15: 会社予想に減配・赤字なし（唯一のフォワードルッキング条件）。
+    過去実績がきれいでも、直近開示の今期予想で減配・赤字を出している銘柄を弾く。
+    - 今期予想 1 株配当 ≧ 前期実績 1 株配当（同額維持は OK。前期実績は dividend_history の末値）
+    - 今期予想 EPS > 0
+    // ASSUMPTION: 減益予想(黒字幅の縮小)は不合格にせずレビューで注記する扱い。赤字予想のみ不合格。"""
+    key = "forecast"
+    fdiv = data.get("forecast_dividend")
+    feps = data.get("forecast_eps")
+    _, div_hist = _recent_window(data.get("dividend_history"), 1)
+    last_div = div_hist[-1] if div_hist else None
+    value = {"forecast_dividend": fdiv, "last_dividend": last_div, "forecast_eps": feps}
+    if not isinstance(fdiv, (int, float)) or not isinstance(feps, (int, float)) or last_div is None:
+        checks[key] = {
+            "ok": False, "value": value,
+            "detail": "会社予想(配当/EPS)または前期実績配当が未取得",
+        }
+        insufficient.append(key)
+        return
+    no_cut = fdiv >= last_div - 1e-9
+    eps_pos = feps > 0
+    checks[key] = {
+        "ok": no_cut and eps_pos, "value": value,
+        "detail": "予想配当 %s円 (前期 %s円, %s) / 予想EPS %s円 (%s)" % (
+            fdiv, last_div, "減配予想なし" if no_cut else "減配予想",
+            feps, "黒字予想" if eps_pos else "赤字予想"),
+    }
+
+
 def judge_company(data, cfg=None):
     """1 社の取得済み指標から健全性コア条件を決定論的に評価し、判定結果 dict を返す。
 
@@ -500,6 +637,12 @@ def judge_company(data, cfg=None):
         "op_cf_history": [100, ..., 180],                  # 直近 10 期
         "revenue_history": [1000, 1100, 1150, 1200, 1300], # 直近 5 期
         "eps_history": [80, 85, 90, 100, 110],             # 直近 5 期
+        "inv_cf_history": [-50, -55, -60],                 # 直近 3 期（通常マイナス）
+        "dividends_paid_history": [30, 32, 34],            # 直近 3 期（支払額を正の数で）
+        "interest_bearing_debt": 200,                      # 最新期の有利子負債
+        "shares_history": [100, 100, 99, 98, 98],          # 直近 5 期の発行済株式数
+        "forecast_dividend": 52,                           # 今期会社予想の 1 株配当
+        "forecast_eps": 115,                               # 今期会社予想 EPS
         "sources": ["url", ...]
       }
     出力:
@@ -604,6 +747,23 @@ def judge_company(data, cfg=None):
         checks["roe"] = {"ok": False, "value": None, "detail": "ROE 未取得"}
         insufficient.append("roe")
 
+    # 条件12: FCF ベース配当性向 < 上限（直近 fcf_periods 期の合計ベース。現金の配当余力）
+    fcf_periods = int(config_value(cfg, "fcf_periods", 3))
+    fcf_payout_max = float(config_value(cfg, "fcf_payout_max", 100.0))
+    _check_fcf_payout(checks, insufficient, data, fcf_periods, fcf_payout_max)
+
+    # 条件13: 有利子負債 ÷ 営業CF（最新期）≦ 上限（債務償還年数。自己資本比率の死角を補完）
+    debt_opcf_max = float(config_value(cfg, "debt_opcf_max", 5.0))
+    _check_debt_coverage(checks, insufficient, data, debt_opcf_max)
+
+    # 条件14: 発行済株式数が希薄化していない（直近 shares_periods 期で +shares_dilution_max % 以内）
+    shares_periods = int(config_value(cfg, "shares_periods", 5))
+    shares_dilution_max = float(config_value(cfg, "shares_dilution_max", 5.0))
+    _check_no_dilution(checks, insufficient, data, shares_periods, shares_dilution_max)
+
+    # 条件15: 会社予想に減配・赤字なし（今期予想配当 ≧ 前期実績、予想 EPS > 0）
+    _check_forecast(checks, insufficient, data)
+
     passed = all(c["ok"] for c in checks.values())
     for name, c in checks.items():
         if not c["ok"]:
@@ -634,6 +794,12 @@ if __name__ == "__main__":
         "op_cf_history": [100, 110, 120, 125, 130, 140, 150, 160, 170, 180],
         "revenue_history": [1000, 1100, 1150, 1200, 1300],
         "eps_history": [80, 85, 90, 100, 110],
+        "inv_cf_history": [-50, -55, -60],
+        "dividends_paid_history": [30, 32, 34],
+        "interest_bearing_debt": 200,
+        "shares_history": [100, 100, 99, 98, 98],
+        "forecast_dividend": 52,
+        "forecast_eps": 115,
     }
     res = judge_company(demo, cfg)
     print("[judge] passed=%s reasons=%s" % (res["passed"], res["reasons"]))
@@ -661,6 +827,24 @@ if __name__ == "__main__":
     r = judge_company(short_op, cfg)
     print("[judge:short-op] passed=%s insufficient=%s" % (r["passed"], r["insufficient"]))
     print("[judge:cf-neg] passed=%s" % judge_company(cf_neg, cfg)["passed"])
+    # 条件12〜15（2026-08-23 拡張）の境界ケース
+    fcf_over = dict(demo, dividends_paid_history=[120, 120, 120])  # FCF345に対し支払360 → 104% で不合格
+    high_debt = dict(demo, interest_bearing_debt=1000)             # 1000/180 = 5.6年 → 不合格
+    no_debt = dict(demo, interest_bearing_debt=0)                  # 無借金 → 合格
+    diluted = dict(demo, shares_history=[100, 102, 104, 106, 108]) # +8% 希薄化 → 不合格
+    fc_cut = dict(demo, forecast_dividend=45)                      # 予想45 < 前期実績50 → 減配予想で不合格
+    fc_loss = dict(demo, forecast_eps=-10)                         # 赤字予想 → 不合格
+    fc_missing = dict(demo, forecast_dividend=None)                # 予想未取得 → insufficient
+    print("[judge:fcf-over] passed=%s reasons=%s" % (
+        judge_company(fcf_over, cfg)["passed"],
+        [x for x in judge_company(fcf_over, cfg)["reasons"] if "fcf" in x]))
+    print("[judge:high-debt] passed=%s / no-debt passed=%s" % (
+        judge_company(high_debt, cfg)["passed"], judge_company(no_debt, cfg)["passed"]))
+    print("[judge:diluted] passed=%s" % judge_company(diluted, cfg)["passed"])
+    print("[judge:forecast-cut] passed=%s / forecast-loss passed=%s" % (
+        judge_company(fc_cut, cfg)["passed"], judge_company(fc_loss, cfg)["passed"]))
+    rf = judge_company(fc_missing, cfg)
+    print("[judge:forecast-missing] passed=%s insufficient=%s" % (rf["passed"], rf["insufficient"]))
     pats = cfg.get("exclude_name_patterns")
     print("[exclude] 日本コンクリート工業 -> %s / ジャパンリート -> %s" % (
         exclusion_reason("日本コンクリート工業", pats), exclusion_reason("ジャパンリート", pats)))
