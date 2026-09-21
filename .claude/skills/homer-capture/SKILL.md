@@ -1,20 +1,40 @@
 ---
 name: homer-capture
 description: >-
-  対話インタビューで技術レベルと経験を深掘りして data/capture/ に記録する。起動時にまず「技術キャプチャ」(使った技術に何をしたか・どこまで理解しているか・何をまだしていないか)と「経験キャプチャ」(経験した内容とそのときの感情)のどちらを深掘るか確認し、モード別に進める。「キャプチャして」「この経験を記録したい」「〜の技術レベルを棚卸しして」「振り返りインタビューして」等で起動。作業ログの機械収集は jarvis-worklog の領分。
+  対話インタビューで技術レベルと経験を深掘りして capture-data/ に記録する。起動時にまず「技術キャプチャ」(使った技術に何をしたか・どこまで理解しているか・何をまだしていないか)と「経験キャプチャ」(経験した内容とそのときの感情)のどちらを深掘るか確認し、モード別に進める。過去のノートは編集せず日付付きの新しいファイルを積み、キャプチャ済みの技術は前回からの差分だけを聞く。「キャプチャして」「この経験を記録したい」「〜の技術レベルを棚卸しして」「振り返りインタビューして」等の明示依頼時のみ起動(自動起動しない)。読書で得た気づきの記録は homer-reading-notes、設計思考の記録は homer-modeling-notes の領分。
 model: sonnet
 effort: medium
+metadata:
+  type: skill
+  data_dir: <repo>/capture-data
+  pairs_with: pepper-skillset-writer, pepper-tech-article-drafter
+  origin: onclimb-industries の capture スキルを 2026-09-21 に移管
 ---
 
 # capture — 対話インタビューによる技術・経験の記録
 
 ユーザーへのインタビューを通じて、本人の中にある技術レベルと経験を言語化し、
-`data/capture/` に一次記録として積み上げる。worklog（ログの機械収集）と並ぶ
-**もう一つの第一インプット**であり、後段の jarvis-knowledge-base（技術面の集約）や
-pepper-skillset-writer（onclimb-cabin 側。スキルセット紹介文）の原料になる。
+リポジトリ直下 `capture-data/` に一次記録として積み上げる。
+persona: [`personas/homer.md`](../../../personas/homer.md)
+（読み手は自分と AI・過程を残す・本人の言葉を平準化しない）。
 
-> 出自: `projects/omni-archive` の `/capture` スキルを onclimb-industries に統合したもの。
-> 移行済みノート（日付なしファイル名）の経緯は `data/capture/README.md` を参照。
+後段の pepper-skillset-writer（スキルセット紹介文）・pepper-tech-article-drafter（技術記事）の
+原料になる**一次インプット**。このスキルは cabin 単体で完結し、業務側リポジトリ
+onclimb-industries のデータ・スキルは参照しない。
+
+> 出自: `projects/omni-archive` の `/capture` → onclimb-industries の capture スキルを経て、
+> 2026-09-21 に onclimb-cabin へ移管したもの。
+> 移行済みノート（日付なしファイル名）の経緯は `capture-data/README.md` を参照。
+
+## 入出力
+
+- **ノート（正本）**: リポジトリ直下 `capture-data/`。
+  - `tech/` — 技術キャプチャ（このスキルの書き込み先）
+  - `experience/` — 経験キャプチャ（このスキルの書き込み先）
+  - `mindset/` / `finance/` / `code-review/` — omni-archive からの移行分。**読むだけで保全し、
+    新規の書き込みはしない**（価値観ノートの新規分は `experience/` に含める）。
+- `capture-data/` は個人の技術・経験の記録のため **git 管理外**（`.gitignore` 済み）。
+- **外部サービスへ送信しない**。案件由来の文脈を含みうるため、内容を要約して外に出さない。
 
 ## Step 0: モード分岐（必須の入口）
 
@@ -23,8 +43,8 @@ pepper-skillset-writer（onclimb-cabin 側。スキルセット紹介文）の�
 
 | 選択肢 | 対象 | 出力先 |
 |---|---|---|
-| **技術キャプチャ** | 使用した技術に対する「何をしたか・どこまで理解しているか・まだ何をしていないか」＝技術レベルの情報 | `data/capture/tech/` |
-| **経験キャプチャ** | 技術に限らない経験の内容と、そのときの感情・学び（価値観・信条の言語化も含む） | `data/capture/experience/` |
+| **技術キャプチャ** | 使用した技術に対する「何をしたか・どこまで理解しているか・まだ何をしていないか」＝技術レベルの情報 | `capture-data/tech/` |
+| **経験キャプチャ** | 技術に限らない経験の内容と、そのときの感情・学び（価値観・信条の言語化も含む） | `capture-data/experience/` |
 | **両方** | プロジェクト振り返りなど | 経験 → 出てきた技術の順で直列実行 |
 
 「両方」の場合は先に経験ルートを完了させ、対話中に濃く出てきた技術を候補として
@@ -37,18 +57,21 @@ pepper-skillset-writer（onclimb-cabin 側。スキルセット紹介文）の�
 対象技術が発話で指定されていなければ、以下の 3 ソースから候補を集めて
 AskUserQuestion で提示する（自由入力も可）:
 
-1. `data/capture/tech/` の既存ノートの frontmatter（`technologies` / `status` / `captured`）
+1. `capture-data/tech/` の既存ノートの frontmatter（`technologies` / `status` / `captured`）
    → **キャプチャが古い技術**（更新候補。captured が古い順）
-2. `data/knowledge-base/index.md` の技術領域のうち capture ノートが無いもの → **未キャプチャ候補**
-3. 直近の worklog digest（`data/worklog/digests/` の新しいもの数件）に出てくる技術
-   → **最近触った技術**
+2. `capture-data/tech/` の `status: learning | familiar` のノート
+   → **前回「まだやっていない」と書いた領域が動いたかの確認候補**
+3. <!-- ASSUMPTION: 業務側の worklog digest が cabin から読めないため、cabin 内の一次記録で代替した -->
+   `modeling-notes/notes/` と `reading-notes/books/` の直近ノートに出てくる技術のうち
+   `capture-data/tech/` にノートが無いもの → **最近考えた・読んだが未キャプチャの技術**
 
 候補収集は `ls` と frontmatter の読み取りで行う（一覧化が重くなってきたら
-`scripts/` への切り出しを検討する）。
+`scripts/` への切り出しを検討する）。データディレクトリが無い・空のときは
+候補提示を飛ばし、「どの技術をキャプチャしますか」と直接聞く。
 
 ### T2. 前回地点の提示（差分インタビュー）
 
-選ばれた技術の既存ノートを `data/capture/tech/` から探して読む
+選ばれた技術の既存ノートを `capture-data/tech/` から探して読む
 （`technologies` frontmatter とファイル名で照合。複数あれば最新の日付のもの）。
 
 - **既存ノートあり**: 「前回（日付）時点では status=〜、未踏は〜でした」と現在地を要約提示し、
@@ -74,15 +97,19 @@ AskUserQuestion で確認を取る。
 
 ### T4. 保存と接続
 
-【まとめ】提示 → 確認 → `data/capture/tech/YYYY-MM-DD_<tech_slug>.md` に保存 →
-「ナレッジベースも更新しますか」と一言提案する。
+【まとめ】提示 → 確認 → `capture-data/tech/YYYY-MM-DD_<tech_slug>.md` に保存 →
+同じ技術・近いテーマの既存ノートがあれば `[[slug]]` で繋ぐ。
+公開できそうな深掘りが出ていたら「pepper-tech-article-drafter で記事の種にしますか」と
+一言だけ提案する（勝手に書かない）。
 
 ## 経験ルート
 
 ### E1. 経験の特定
 
 いつ・どの出来事かを確定する。曖昧なら「直近で一番印象に残っている仕事の場面は？」から入る。
-直近の worklog や ToDo から候補を提示してもよい。
+<!-- ASSUMPTION: 業務側の worklog / ToDo が cabin から読めないため、候補源を cabin 内の記録に差し替えた -->
+候補が要るときは `capture-data/experience/` の既存ノート（まだ書いていない時期・プロジェクト）や
+`modeling-notes/notes/` の直近の気づきから拾って提示する。
 
 ### E2. 事実の再構成（短く）
 
@@ -108,7 +135,7 @@ AskUserQuestion で確認を取る。
 
 ### E5. 保存と接続
 
-【まとめ】提示 → 確認 → `data/capture/experience/YYYY-MM-DD_<slug>.md` に保存。
+【まとめ】提示 → 確認 → `capture-data/experience/YYYY-MM-DD_<slug>.md` に保存。
 対話中に技術の話が濃く出ていたら「この技術は技術キャプチャにも積みますか」と提案する
 （「両方」モードならそのまま技術ルートへ）。
 
@@ -120,7 +147,7 @@ AskUserQuestion で確認を取る。
 - 1 セッション 1 トピック。深掘り質問は目安 5〜7 往復で【まとめ】提示に移る
   （不足があれば追記の往復をする）。
 - ユーザーの言っていないことを書かない。要約して返し、確認を取る。
-- 既存ノート・worklog にある事実は聞き直さず「〜という理解で合っていますか」の確認形式にする。
+- 既存の capture ノートにある事実は聞き直さず「〜という理解で合っていますか」の確認形式にする。
 - 技術的な事実（仕組み・用語・数値）に不正確さがあれば穏やかに指摘し、
   訂正は本文を書き換えるのではなく「メモ・補足」節に残す。必要なら WebSearch で裏を取る。
   意見・感情・主観的経験はファクトチェックしない。
@@ -132,13 +159,13 @@ AskUserQuestion で確認を取る。
 **共通ルール:**
 
 - ファイル名: `YYYY-MM-DD_<英語snake_caseのslug>.md`（日付プレフィックス必須）。
-- **過去のノートは編集せず、新しい日付ファイルを積む**（knowledge-base の増分更新が
-  新規ファイル単位で取り込むため。同じ技術の再キャプチャも新ファイルにする）。
+- **過去のノートは編集せず、新しい日付ファイルを積む**（T2 の差分インタビューが
+  「前回地点」を過去ファイルから読むため。同じ技術の再キャプチャも新ファイルにする）。
 - 1 トピック 1 ファイル。緩いまとまりで良いが、技術と経験は必ずファイルを分ける。
 - Obsidian インラインタグ（技術名は英語 `#NestJS`、概念は日本語 `#振り返り`）を
   セクション見出し直下に 3〜6 個付ける。関連ノートがあれば `[[slug]]` で繋ぐ。
 
-**技術キャプチャ** (`data/capture/tech/YYYY-MM-DD_<tech_slug>.md`):
+**技術キャプチャ** (`capture-data/tech/YYYY-MM-DD_<tech_slug>.md`):
 
 ```markdown
 ---
@@ -163,7 +190,7 @@ captured: YYYY-MM-DD
 <ファクトチェックの訂正・裏取り結果。無ければ省略>
 ```
 
-**経験キャプチャ** (`data/capture/experience/YYYY-MM-DD_<slug>.md`):
+**経験キャプチャ** (`capture-data/experience/YYYY-MM-DD_<slug>.md`):
 
 ```markdown
 ---
@@ -185,14 +212,17 @@ captured: YYYY-MM-DD
 ## 機密・一般化の扱い
 
 - **技術キャプチャは一般化して書く**（顧客名・接続情報・案件特定情報を持ち込まない）。
-  knowledge-base → 公開系（homepage 等）へ流れる前提のため。案件文脈が必要なら
-  「業務システム」「SES 先の案件」程度に丸める。
+  pepper 系スキル経由で公開物（技術記事・スキルセット紹介文）へ流れる前提のため。
+  案件文脈が必要なら「業務システム」「SES 先の案件」程度に丸める。
 - **経験キャプチャは本人の言葉を優先**する（読み手は自分と AI のみ）。ただし
   API キー・トークン等の機密は含めない。実名は本人が望む場合のみ残す。
 
-## 後段への接続
+## 後段への接続と棲み分け
 
-- 技術キャプチャは jarvis-knowledge-base が worklog の tech digest と併せて取り込む
-  （`kb_build.py` が `data/capture/tech/*.md` を自動で読む）。
-- 経験キャプチャは pepper-skillset-writer の補助入力・pepper-tech-article-drafter（いずれも onclimb-cabin 側）の
-  記事の種になる。記事にできそうな深掘りが出たら一言提案する（勝手に書かない）。
+- 技術キャプチャ（`capture-data/tech/`）は **pepper-skillset-writer の level 判定の主根拠**、
+  経験キャプチャ（`capture-data/experience/`）は同スキルの補助入力になる。
+- 経験キャプチャは pepper-tech-article-drafter の記事の種にもなる。記事にできそうな
+  深掘りが出たら一言提案する（勝手に書かない）。
+- **棲み分け**: 本を読んで得た気づきは homer-reading-notes、設計・ドメインモデリングの
+  思考過程は homer-modeling-notes の領分。本スキルは「使った技術の現在地」と
+  「経験したことと感情」を扱う。
