@@ -32,6 +32,7 @@
 |--------|------|
 | `homer-reading-notes` | 一次資料・ノート系 |
 | `homer-modeling-notes` | 一次資料・ノート系 |
+| `homer-capture` | 一次資料・ノート系 |
 | `ultron-invoice-builder` | 事務・金融・資産系 |
 | `ultron-contract-review-assistant` | 事務・金融・資産系 |
 | `ultron-tax-prep-organizer` | 事務・金融・資産系 |
