@@ -4,7 +4,7 @@
 個人の学習・思考の記録 — を扱うスキル群の共通ルール。清書前・公開前の情報がここに属する。
 （業務側の一次資料系は onclimb-industries の jarvis。プレフィックスはリポジトリ間で重複させない）
 
-所属スキル: `homer-reading-notes` / `homer-modeling-notes`
+所属スキル: `homer-reading-notes` / `homer-modeling-notes` / `homer-capture`
 
 ## 共通の役割
 
