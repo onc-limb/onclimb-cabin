@@ -58,6 +58,7 @@
 | ultron-invoice-builder | ピン sonnet | 金額計算は全てスクリプト。明細整理のみ |
 | ultron-tax-prep-organizer | ピン sonnet | 科目は候補付けのみ。判断が分かれる取引は設計上「要確認」行き |
 | ultron-family-budget-manager | ピン sonnet | レシート読み取り（失敗は inbox 残しの設計） |
+| ultron-household-ledger | ピン sonnet | 台帳への手入力と CLI 出力の転記。精算計算は Rust CLI |
 | ultron-dividend-recorder | ピン sonnet | 配当書類の読み取りと台帳追記。検算・集計はスクリプト |
 | ultron-high-dividend-stock-screener | ピン sonnet | 公開情報の収集・機械的な篩い。銘柄ごとの個別取得は haiku 委任可 |
 | ultron-contract-review-assistant | 継承（opus 以上推奨） | 条項リスクの見落としコストが大きい |

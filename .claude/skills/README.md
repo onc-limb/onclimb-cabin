@@ -38,6 +38,7 @@
 | `ultron-tax-prep-organizer` | 事務・金融・資産系 |
 | `ultron-dividend-recorder` | 事務・金融・資産系 |
 | `ultron-family-budget-manager` | 事務・金融・資産系 |
+| `ultron-household-ledger` | 事務・金融・資産系 |
 | `ultron-high-dividend-stock-screener` | 事務・金融・資産系 |
 | `ultron-portfolio-analyzer` | 事務・金融・資産系 |
 | `ultron-freelance-rate-research` | 事務・金融・資産系 |

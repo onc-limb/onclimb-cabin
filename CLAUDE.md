@@ -35,8 +35,8 @@ onclimb-cabin リポジトリのプロジェクト固有ガイドライン。
 - スキルのデータはリポジトリ直下の git 管理外ディレクトリ（例: `dividend-data/`,
   `shared-expense-data/`）に置き、`.gitignore` に理由コメント付きで追加する（既存の書式に合わせる）。
 - 一部のデータディレクトリは Google Drive（マイドライブ/onclimb-industries 配下）への
-  シンボリックリンク: `dividend-data`（ディレクトリ自体）、`people-memory/` と
-  `shared-expense-data/` の中のサブディレクトリ。リンク切れのときは Google Drive アプリの起動を疑う。
+  シンボリックリンク: `dividend-data`（ディレクトリ自体）、`people-memory/`・
+  `shared-expense-data/`・`household-data/` の中のサブディレクトリ。リンク切れのときは Google Drive アプリの起動を疑う。
 - 台帳系（配当・家計・ToDo 等）は必ず各スキルの決定論スクリプト経由で操作し、JSON を直接編集しない。
 
 ## study ディレクトリ（AI がコードを書かない学習用の場）
