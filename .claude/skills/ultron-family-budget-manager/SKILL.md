@@ -1,7 +1,7 @@
 ---
 name: ultron-family-budget-manager
 description: >-
-  夫婦の共同支出(食費中心)のレシートを記録し、割り勘精算の元データとなる月次集計を作る。shared-expense-data/inbox/ のレシート画像を読み取って日付・店舗・税込合計・カテゴリを抽出し、購入月のアーカイブへリネーム移動して transactions.jsonl に追記、summary.md を再生成する。読み取りに失敗したファイルは推測で埋めず inbox に残して報告する。「レシート集計して」「inbox 整理して」「今月の食費まとめて」「割り勘用の集計出して」等で起動。本スキルは世帯の共同支出のみを扱い、個人の家計全体(収入・固定費・収支)は対象外。
+  夫婦の共同支出(食費中心)と立て替えのレシートを記録し、家計精算ダッシュボード(household-dashboard)の入力①となる transactions.jsonl を作る。shared-expense-data/inbox/ のレシート画像を読み取って日付・店舗・税込合計・カテゴリを抽出し、購入月のアーカイブへリネーム移動して transactions.jsonl に追記、summary.md を再生成し、household CLI で精算ビューを更新する。支払者・種別(共同 50/50 か 立て替え 100%)は既定値(智史・共同)で取り込み、例外は household receipt で後から直す。読み取りに失敗したファイルは推測で埋めず inbox に残して報告する。「レシート集計して」「inbox 整理して」「今月の食費まとめて」「このレシートは香琳の立て替えに直して」等で起動。光熱費・家賃相殺などの手入力は ultron-household-ledger の領分。
 model: sonnet
 effort: medium
 metadata:
@@ -14,11 +14,15 @@ metadata:
 
 > **家族のお金（夫婦の共同支出、ほぼ食費）のレシートを月別に記録・集計するスキル。**
 > 財布が別の夫婦間で「払った分を割り勘する」ための精算元データを作るのが目的。
+> 精算計算と閲覧は `household-dashboard/`（Rust CLI + Grafana）が担い、本スキルの
+> `transactions.jsonl` はその入力①になる（入力②は手入力台帳。`ultron-household-ledger`）。
 > 処理は必ず下の手順を**上から順に**実行する（スキップ・順序入れ替え禁止）。
 
 ## 棲み分け（重要）
 
-- **本スキル**: **家族のお金**（夫婦の共同支出、食費中心）の記録と月次合計。割り勘精算の元データ。**家族側**。
+- **本スキル**: **家族のお金**（夫婦の共同支出、食費中心）のレシート記録と月次合計。精算の入力①。**家族側**。
+- **`ultron-household-ledger`**: レシートの無い支出（光熱費・家賃相殺・振込・その他の立て替え）の手入力と、
+  残高・精算の確認。同じ支出をレシートと手入力の両方に入れない。
 - 本人**個人**の資産管理（収入 − 固定費 − 変動費の収支）は本スキルの対象外
   （旧 `ultron-personal-budget-manager` は未使用のため廃止。必要になったら分割し直す）。
 - 同じレシートを両方に入れない（共同支出のレシートは本スキル側のみ）。
@@ -60,8 +64,9 @@ shared-expense-data/
 ## 手順
 
 ```bash
-SKILL=/Users/satoshi-onga/Documents/onclimb-industries/.claude/skills/ultron-family-budget-manager
-DATA=${SHARED_EXPENSE_DATA:-<repo>/shared-expense-data}
+REPO=$(git rev-parse --show-toplevel)   # onclimb-cabin
+SKILL=$REPO/.claude/skills/ultron-family-budget-manager
+DATA=${SHARED_EXPENSE_DATA:-$REPO/shared-expense-data}
 ```
 
 ### Step 1. inbox を列挙
@@ -136,6 +141,12 @@ mv "$DATA/inbox/<元ファイル>" "$DATA/archive/<YYYY-MM>/receipts/<新ファ�
 | `file` | string | archive後の相対パス `receipts/...` |
 | `source` | string | inbox 投入時の元ファイル名 |
 | `added_at` | string ISO8601 | 追記日時(JST, タイムゾーン込み) |
+| `payer` | string（省略可） | 支払者 `智史` / `香琳`。**省略時は智史** |
+| `kind` | string（省略可） | `共同`（50/50）/ `個別`（立て替え 100%）。**省略時は共同** |
+
+`payer` / `kind` は、ユーザーが取り込み時に明示したとき（「このレシートは香琳が払った」
+「これは香琳の分の立て替え」等）だけ書く。言われていなければ省略して既定値に任せる
+（推測で埋めない）。取り込み後の修正は Step 7 の `household receipt` で行う。
 
 追記ルール:
 - 末尾に append するだけ（順序は問わない。並べ替えは summary 生成時に行う）。
@@ -191,6 +202,28 @@ PY
 - <ファイル名>: <理由>
 ```
 
+### Step 7. 精算ビューを更新（household-dashboard）
+
+取り込みが 1 件以上あったら、精算の SQLite 派生ビューを作り直して残高を報告に添える。
+
+```bash
+cd "$REPO/household-dashboard" && cargo run -q -- export && cargo run -q -- balance
+```
+
+- `export` は jsonl を読むだけで書き換えない。Grafana（http://localhost:3001）は次の更新で反映される。
+- `household-data/ledger/config.json` の `receiptsFrom`（既定 2026-08）より前のレシートは精算に入らない
+  （出力の「精算対象外」件数で確認できる）。
+
+**支払者・種別の修正**（ユーザーに頼まれたときだけ）: jsonl を手で編集せず CLI で直す。
+`--ref` は `<購入月>/<source>`（`household list` の `[R ...]` に出る値）。
+
+```bash
+cargo run -q -- receipt --ref 2026-08/IMG_1234.JPG --payer 香琳            # 香琳が払った共同支出
+cargo run -q -- receipt --ref 2026-08/IMG_1234.JPG --kind 個別             # 智史が香琳の分を立て替えた
+```
+
+修正後は該当月の summary.md も Step 5 のスクリプトで再生成する（支払者・種別列が変わるため）。
+
 ## エラー時の振る舞い
 
 | 状況 | 対応 |
@@ -202,7 +235,8 @@ PY
 | 同じ source のレコードが既存 | 追記スキップ + warning ログ |
 
 **禁止事項**: 失敗ファイルを勝手に削除しない / inbox 以外の既存ファイルを書き換えない
-（archive の既存レシートは読むだけ）/ summary.md の「月次確定」セクションを再生成で消さない。
+（archive の既存レシートは読むだけ。例外は Step 7 の `household receipt` による支払者・種別の修正のみ）/
+summary.md の「月次確定」セクションを再生成で消さない。
 
 ## 品質・安全性（persona: ultron）
 
