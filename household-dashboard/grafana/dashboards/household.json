@@ -1,0 +1,470 @@
+{
+  "uid": "household",
+  "title": "家計ダッシュボード",
+  "tags": [
+    "household"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5m",
+  "time": {
+    "from": "now-2y",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "現在残高（正 = 香琳 → 智史）",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT balance AS \"残高\" FROM household_summary",
+          "queryText": "SELECT balance AS \"残高\" FROM household_summary",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "家賃相殺の提案",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 8,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT rent_pass_amount AS \"相殺額\", rent_pass AS \"提案\" FROM household_summary",
+          "queryText": "SELECT rent_pass_amount AS \"相殺額\", rent_pass AS \"提案\" FROM household_summary",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "今月の共同支出",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 14,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT COALESCE(SUM(amount),0) AS \"共同支出\", COALESCE(SUM(amount),0)/2.0 AS \"1人あたり\" FROM household_entries WHERE kind='共同' AND month=strftime('%Y-%m','now','localtime')",
+          "queryText": "SELECT COALESCE(SUM(amount),0) AS \"共同支出\", COALESCE(SUM(amount),0)/2.0 AS \"1人あたり\" FROM household_entries WHERE kind='共同' AND month=strftime('%Y-%m','now','localtime')",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "データ",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT generated_at AS \"最終更新\", receipts_from AS \"レシート計上開始月\" FROM household_summary",
+          "queryText": "SELECT generated_at AS \"最終更新\", receipts_from AS \"レシート計上開始月\" FROM household_summary",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "残高推移",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "time series",
+          "rawQueryText": "SELECT CAST(strftime('%s', date) AS INTEGER) AS time, balance AS \"残高\" FROM household_balance ORDER BY date",
+          "queryText": "SELECT CAST(strftime('%s', date) AS INTEGER) AS time, balance AS \"残高\" FROM household_balance ORDER BY date",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "barchart",
+      "title": "月別 共同支出（カテゴリ積み上げ）",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "stacking": "normal",
+        "xField": "月",
+        "legend": {
+          "showLegend": true,
+          "placement": "right"
+        },
+        "showValue": "never"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT month AS \"月\", SUM(CASE WHEN category='電気' THEN amount ELSE 0 END) AS \"電気\", SUM(CASE WHEN category='水道' THEN amount ELSE 0 END) AS \"水道\", SUM(CASE WHEN category='ガス' THEN amount ELSE 0 END) AS \"ガス\", SUM(CASE WHEN category='食費' THEN amount ELSE 0 END) AS \"食費\", SUM(CASE WHEN category='外食' THEN amount ELSE 0 END) AS \"外食\", SUM(CASE WHEN category='ビール' THEN amount ELSE 0 END) AS \"ビール\", SUM(CASE WHEN category='日用品' THEN amount ELSE 0 END) AS \"日用品\", SUM(CASE WHEN category='交通費' THEN amount ELSE 0 END) AS \"交通費\", SUM(CASE WHEN category='旅行' THEN amount ELSE 0 END) AS \"旅行\", SUM(CASE WHEN category='家具' THEN amount ELSE 0 END) AS \"家具\", SUM(CASE WHEN category='その他' THEN amount ELSE 0 END) AS \"その他\" FROM household_entries WHERE kind='共同' AND month >= strftime('%Y-%m','now','localtime','-12 months') GROUP BY month ORDER BY month",
+          "queryText": "SELECT month AS \"月\", SUM(CASE WHEN category='電気' THEN amount ELSE 0 END) AS \"電気\", SUM(CASE WHEN category='水道' THEN amount ELSE 0 END) AS \"水道\", SUM(CASE WHEN category='ガス' THEN amount ELSE 0 END) AS \"ガス\", SUM(CASE WHEN category='食費' THEN amount ELSE 0 END) AS \"食費\", SUM(CASE WHEN category='外食' THEN amount ELSE 0 END) AS \"外食\", SUM(CASE WHEN category='ビール' THEN amount ELSE 0 END) AS \"ビール\", SUM(CASE WHEN category='日用品' THEN amount ELSE 0 END) AS \"日用品\", SUM(CASE WHEN category='交通費' THEN amount ELSE 0 END) AS \"交通費\", SUM(CASE WHEN category='旅行' THEN amount ELSE 0 END) AS \"旅行\", SUM(CASE WHEN category='家具' THEN amount ELSE 0 END) AS \"家具\", SUM(CASE WHEN category='その他' THEN amount ELSE 0 END) AS \"その他\" FROM household_entries WHERE kind='共同' AND month >= strftime('%Y-%m','now','localtime','-12 months') GROUP BY month ORDER BY month",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "barchart",
+      "title": "光熱費（月別）",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "stacking": "none",
+        "xField": "月",
+        "legend": {
+          "showLegend": true
+        },
+        "showValue": "never"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT month AS \"月\", SUM(CASE WHEN category='電気' THEN amount ELSE 0 END) AS \"電気\", SUM(CASE WHEN category='水道' THEN amount ELSE 0 END) AS \"水道\", SUM(CASE WHEN category='ガス' THEN amount ELSE 0 END) AS \"ガス\" FROM household_entries WHERE category IN ('電気','水道','ガス') AND month >= strftime('%Y-%m','now','localtime','-12 months') GROUP BY month ORDER BY month",
+          "queryText": "SELECT month AS \"月\", SUM(CASE WHEN category='電気' THEN amount ELSE 0 END) AS \"電気\", SUM(CASE WHEN category='水道' THEN amount ELSE 0 END) AS \"水道\", SUM(CASE WHEN category='ガス' THEN amount ELSE 0 END) AS \"ガス\" FROM household_entries WHERE category IN ('電気','水道','ガス') AND month >= strftime('%Y-%m','now','localtime','-12 months') GROUP BY month ORDER BY month",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "月次精算",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyJPY",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT month AS \"月\",\n  SUM(CASE WHEN kind='共同' THEN amount ELSE 0 END) AS \"共同支出\",\n  SUM(CASE WHEN kind='共同' AND payer='智史' THEN amount ELSE 0 END) AS \"共同 智史払い\",\n  SUM(CASE WHEN kind='共同' AND payer='香琳' THEN amount ELSE 0 END) AS \"共同 香琳払い\",\n  SUM(CASE WHEN kind IN ('個別','調整') AND payer='智史' THEN amount ELSE 0 END) AS \"立て替え 智史\",\n  SUM(CASE WHEN kind IN ('個別','調整') AND payer='香琳' THEN amount ELSE 0 END) AS \"立て替え 香琳\",\n  SUM(CASE WHEN kind='振込' THEN delta ELSE 0 END) AS \"振込\",\n  SUM(delta) AS \"残高変動\"\nFROM household_entries GROUP BY month ORDER BY month DESC",
+          "queryText": "SELECT month AS \"月\",\n  SUM(CASE WHEN kind='共同' THEN amount ELSE 0 END) AS \"共同支出\",\n  SUM(CASE WHEN kind='共同' AND payer='智史' THEN amount ELSE 0 END) AS \"共同 智史払い\",\n  SUM(CASE WHEN kind='共同' AND payer='香琳' THEN amount ELSE 0 END) AS \"共同 香琳払い\",\n  SUM(CASE WHEN kind IN ('個別','調整') AND payer='智史' THEN amount ELSE 0 END) AS \"立て替え 智史\",\n  SUM(CASE WHEN kind IN ('個別','調整') AND payer='香琳' THEN amount ELSE 0 END) AS \"立て替え 香琳\",\n  SUM(CASE WHEN kind='振込' THEN delta ELSE 0 END) AS \"振込\",\n  SUM(delta) AS \"残高変動\"\nFROM household_entries GROUP BY month ORDER BY month DESC",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "table",
+      "title": "店舗別（レシート）",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "金額"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyJPY"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
+          "queryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "明細（直近 200 件）",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "household-sqlite"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 16,
+        "x": 8,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "金額|残高変動"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyJPY"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "household-sqlite"
+          },
+          "queryType": "table",
+          "rawQueryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額\", delta AS \"残高変動\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
+          "queryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額\", delta AS \"残高変動\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
+          "timeColumns": []
+        }
+      ]
+    }
+  ]
+}

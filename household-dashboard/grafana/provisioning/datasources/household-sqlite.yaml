@@ -1,0 +1,12 @@
+# 家計台帳の SQLite 派生ビュー（household CLI が書き出す。正本は records.json と transactions.jsonl）。
+apiVersion: 1
+
+datasources:
+  - name: Household SQLite
+    uid: household-sqlite
+    type: frser-sqlite-datasource
+    access: proxy
+    isDefault: true
+    editable: false
+    jsonData:
+      path: /var/lib/grafana/household/household.db

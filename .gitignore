@@ -12,6 +12,12 @@
 # family-budget-manager: 共同支出のレシート画像・取引記録（世帯の金銭情報のため追跡しない）
 /shared-expense-data/
 
+# household-dashboard: 家計台帳（records.json は Google Drive へのシンボリックリンク）と Grafana 用 SQLite（世帯の金銭情報のため追跡しない）
+/household-data
+
+# household-dashboard: Rust のビルド成果物（再生成できるため追跡しない）
+/household-dashboard/target/
+
 # people-memory: 人物ごとの会話記録・好みメモ（人間関係・家族の機密のため追跡しない）
 /people-memory/
 
