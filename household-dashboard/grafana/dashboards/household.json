@@ -22,7 +22,7 @@
     {
       "id": 1,
       "type": "stat",
-      "title": "現在残高（正 = 香琳 → 智史）",
+      "title": "現在残高（正 = 香琳 → 智史）（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -35,8 +35,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -69,7 +68,7 @@
     {
       "id": 2,
       "type": "stat",
-      "title": "家賃相殺の提案",
+      "title": "家賃相殺の提案（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -82,8 +81,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -116,7 +114,7 @@
     {
       "id": 3,
       "type": "stat",
-      "title": "今月の共同支出",
+      "title": "今月の共同支出（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -129,8 +127,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -207,7 +204,7 @@
     {
       "id": 5,
       "type": "timeseries",
-      "title": "残高推移",
+      "title": "残高推移（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -220,8 +217,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0,
+          "unit": "locale",
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "stepAfter",
@@ -254,7 +250,7 @@
     {
       "id": 6,
       "type": "barchart",
-      "title": "月別 共同支出（カテゴリ積み上げ）",
+      "title": "月別 共同支出（カテゴリ積み上げ）（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -267,8 +263,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -298,7 +293,7 @@
     {
       "id": 7,
       "type": "barchart",
-      "title": "光熱費（月別）",
+      "title": "光熱費（月別）（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -311,8 +306,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -341,7 +335,7 @@
     {
       "id": 8,
       "type": "table",
-      "title": "月次精算",
+      "title": "月次精算（円）",
       "datasource": {
         "type": "frser-sqlite-datasource",
         "uid": "household-sqlite"
@@ -354,8 +348,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyJPY",
-          "decimals": 0
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -399,7 +392,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "currencyJPY"
+                "value": "locale"
               }
             ]
           }
@@ -414,8 +407,8 @@
             "uid": "household-sqlite"
           },
           "queryType": "table",
-          "rawQueryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
-          "queryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
+          "rawQueryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額（円）\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
+          "queryText": "SELECT item AS \"店舗\", COUNT(*) AS \"件数\", SUM(amount) AS \"金額（円）\" FROM household_entries WHERE source='receipt' GROUP BY item ORDER BY SUM(amount) DESC",
           "timeColumns": []
         }
       ]
@@ -445,7 +438,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "currencyJPY"
+                "value": "locale"
               }
             ]
           }
@@ -460,8 +453,8 @@
             "uid": "household-sqlite"
           },
           "queryType": "table",
-          "rawQueryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額\", delta AS \"残高変動\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
-          "queryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額\", delta AS \"残高変動\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
+          "rawQueryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額（円）\", delta AS \"残高変動（円）\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
+          "queryText": "SELECT date AS \"日付\", CASE source WHEN 'receipt' THEN 'レシート' ELSE '手入力' END AS \"入力\", item AS \"内容\", category AS \"カテゴリ\", kind AS \"種別\", payer AS \"支払者\", transfer_to AS \"振込先\", amount AS \"金額（円）\", delta AS \"残高変動（円）\", memo AS \"メモ\", ref AS \"参照\" FROM household_entries ORDER BY date DESC, ref DESC LIMIT 200",
           "timeColumns": []
         }
       ]
