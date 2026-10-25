@@ -12,6 +12,9 @@
 # family-budget-manager: 共同支出のレシート画像・取引記録（世帯の金銭情報のため追跡しない）
 /shared-expense-data/
 
+# household-dashboard: 家計 DB・手入力台帳（Google Drive へのシンボリックリンク）（世帯の金銭情報のため追跡しない）
+/household-data/
+
 # people-memory: 人物ごとの会話記録・好みメモ（人間関係・家族の機密のため追跡しない）
 /people-memory/
 
@@ -46,6 +49,9 @@
 __pycache__/
 *.pyc
 .venv/
+
+# Rust: cargo のビルド成果物（ビルド時の副産物のため追跡しない）
+target/
 
 # macOS
 .DS_Store
