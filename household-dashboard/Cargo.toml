@@ -1,0 +1,15 @@
+[package]
+name = "household"
+version = "0.1.0"
+edition = "2021"
+description = "夫婦の家計台帳（手入力台帳 + レシート集計）の精算 CLI と Grafana 用 SQLite 派生ビュー"
+publish = false
+
+[[bin]]
+name = "household"
+path = "src/main.rs"
+
+[dependencies]
+# preserve_order: transactions.jsonl の 1 行を書き換えるとき、既存キーの並びを崩さないため。
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }

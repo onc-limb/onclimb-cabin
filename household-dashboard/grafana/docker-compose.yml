@@ -1,0 +1,30 @@
+# 家計ダッシュボード（Grafana OSS）のローカル起動定義。
+#
+# - datasource / dashboards は provisioning でコード化しているため、UI 操作は不要。
+# - `household-data/` を読み取り専用でマウントし、household CLI が書き出した
+#   household.db（SQLite 派生ビュー）を参照する。Grafana からは一切書き込まない。
+# - onclimb-industries 側の Grafana（3000）と同時に起動できるよう 3001 を使う。
+#
+# 使い方:
+#   cd household-dashboard/grafana
+#   docker compose up -d
+#   → http://localhost:3001 で「家計ダッシュボード」を開く。
+services:
+  grafana:
+    image: grafana/grafana-oss:11.2.0
+    container_name: household-grafana
+    # 匿名 Viewer を有効にしているため、127.0.0.1 にのみバインドして LAN 上の
+    # 第三者が家計データをログイン無しで閲覧するのを防ぐ。
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      # ASSUMPTION: industries 側で使っていた組み合わせ（Grafana 11.2.0 + プラグイン 3.5.0）を踏襲する。
+      GF_INSTALL_PLUGINS: frser-sqlite-datasource 3.5.0
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_DEFAULT_THEME: dark
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/household.json
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - ./dashboards:/var/lib/grafana/dashboards:ro
+      - ../../household-data:/var/lib/grafana/household:ro

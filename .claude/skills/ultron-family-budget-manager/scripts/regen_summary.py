@@ -19,6 +19,11 @@ from collections import OrderedDict
 
 CATEGORIES = ["食費", "日用品", "交通費", "外食", "その他"]
 
+# payer / kind が未記入のレシートは household CLI と同じく「智史・共同」とみなす
+# （household-dashboard/src/model.rs の RECEIPT_DEFAULT_* と揃える）。
+DEFAULT_PAYER = "智史"
+DEFAULT_KIND = "共同"
+
 
 def yen(n: int) -> str:
     return "¥{:,}".format(n)
@@ -76,13 +81,14 @@ def build_summary(records, ym: str, confirmation: str, generated_at: str) -> str
         "",
         f"## 明細 ({n} 件)",
         "",
-        "| 日付 | 店舗 | カテゴリ | 金額 | ファイル |",
-        "|------|------|----------|------|----------|",
+        "| 日付 | 店舗 | カテゴリ | 金額 | 支払者 | 種別 | ファイル |",
+        "|------|------|----------|------|--------|------|----------|",
     ]
     for r in records:
         lines.append(
             f"| {r['date']} | {r['store']} | {r['category']} | "
-            f"{yen(r['total'])} | {r['file']} |"
+            f"{yen(r['total'])} | {r.get('payer', DEFAULT_PAYER)} | "
+            f"{r.get('kind', DEFAULT_KIND)} | {r['file']} |"
         )
 
     lines += ["", "## カテゴリ別合計", "", "| カテゴリ | 件数 | 金額 |", "|----------|------|------|"]
